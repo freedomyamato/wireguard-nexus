@@ -17,6 +17,13 @@ source = manifest.read_text()
 if not source.startswith(('// swift-tools-version:5.3\n', '// swift-tools-version:5.5\n')):
     raise SystemExit('Unexpected WireGuard package manifest; review the pinned dependency')
 manifest.write_text(source.replace('// swift-tools-version:5.3\n', '// swift-tools-version:5.5\n', 1))
+# Xcode 16's module checks require the header to import its BSD integer types.
+header = Path('vendor/wireguard-apple/Sources/WireGuardKitC/WireGuardKitC.h')
+source = header.read_text()
+if '#include <sys/types.h>' not in source:
+    if '#include "key.h"' not in source:
+        raise SystemExit('Unexpected WireGuard C header; review the pinned dependency')
+    header.write_text(source.replace('#include "key.h"', '#include <sys/types.h>\n#include "key.h"', 1))
 PY
 xcodegen generate
 printf 'Open WireGuardNexus.xcodeproj, set your team and bundle IDs, then build for a real iPhone.\n'
