@@ -16,10 +16,23 @@ through Android Studio or `adb install`. The debug signing identity is for
 testing, not a stable public release identity.
 
 The included `.github/workflows/android.yml` performs the same build and uploads
-that APK as an Actions artifact. Place this package's **contents** at the root
-of a dedicated repository and run the workflow. It has not been run in this
-environment. Download the artifact from that workflow's completed run; no APK
-is included in this ZIP.
+that APK as an Actions artifact. Compilation and lint passed in the
+[October 2, 2026 build](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980297739).
+While signed into GitHub, open that run, download `nexus-android-debug` from
+Artifacts, unzip it, and transfer `app-debug.apk` to an Android phone. Allow
+installation from the app used to open the APK when Android prompts you.
+Alternatively, run `adb install app-debug.apk` from a trusted computer.
+
+That artifact expires October 9, 2026. For a fresh APK, open **Actions → Android
+build and server tests → Run workflow**, select `main`, and wait for a successful
+run. Debug builds use a test signing key; fresh CI runs may create a different
+key. An update with a different key requires uninstalling the old test app,
+which removes its local enrollment keys. Revoke that device on your server and
+enroll the new installation. Use a stable owner release key before distribution.
+
+The app needs your own WireGuard server: import an existing supported profile,
+or deploy Nexus and enroll using its server URL and invitation token. Build
+success does not provide a working hosted VPN subscription.
 
 For an owner-signed release, create and protect your own signing keystore, set
 `NEXUS_KEYSTORE` (absolute path), `NEXUS_STORE_PASSWORD`, `NEXUS_KEY_ALIAS`, and
@@ -40,7 +53,8 @@ in that profile; secure local generation is provided by Nexus enrollment.
 
 ## iPhone
 
-Requires a Mac, Xcode, Go, XcodeGen and dependency-network access. In `ios/`, run:
+Requires a Mac, Xcode 16.4+, Go 1.19.13, XcodeGen and dependency-network access.
+The CI runner is `macos-15`. In `ios/`, run:
 
 ```bash
 brew install xcodegen
@@ -49,6 +63,8 @@ open WireGuardNexus.xcodeproj
 ```
 
 The preparation script checks out a fixed upstream WireGuard Apple commit.
+It applies two compatibility fixes to that local checkout: the manifest's
+Swift package API version and an explicit BSD integer-type header import.
 The XcodeGen project includes a SwiftUI app, an embedded packet-tunnel extension,
 shared Keychain access and the Go bridge build phase. The old upstream Go bridge
 requires Go-runtime patches; the CI workflow selects Go 1.19.13 for compatibility.
@@ -61,8 +77,10 @@ Provision both with the packet-tunnel Network Extension and shared Keychain
 entitlements. The app stores a persistent Keychain reference in VPN preferences;
 it does not store the private key in those preferences.
 
-The workflow `.github/workflows/ios.yml` attempts an unsigned device-SDK build
-for compile validation. An unsigned build cannot be installed on an ordinary
+The workflow `.github/workflows/ios.yml` performs an unsigned device-SDK build
+for compile validation. The [October 2, 2026 build](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980841668)
+passed with Xcode 16.4, including the app, embedded extension and Go bridge.
+An unsigned build cannot be installed on an ordinary
 iPhone. Produce an owner-signed Archive and upload it to TestFlight for testing,
 then submit an App Store release after passing device tests and review.
 

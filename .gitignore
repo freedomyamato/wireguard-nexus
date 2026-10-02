@@ -13,5 +13,6 @@ android/**/build/
 ios/vendor/
 ios/*.xcodeproj/
 ios/App/*.entitlements
+ios/App/Info.plist
 ios/Tunnel/*.entitlements
 ios/Tunnel/Info.plist

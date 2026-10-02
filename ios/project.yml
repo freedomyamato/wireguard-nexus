@@ -25,6 +25,14 @@ targets:
         INFOPLIST_KEY_NexusKeychainGroup: '$(AppIdentifierPrefix)$(NEXUS_SHARED_GROUP)'
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+    info:
+      path: App/Info.plist
+      properties:
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
     entitlements:
       path: App/Nexus.entitlements
       properties:
@@ -42,6 +50,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.wgnexus.mobile.tunnel
+        MARKETING_VERSION: '0.2'
+        CURRENT_PROJECT_VERSION: '2'
         APPLICATION_EXTENSION_API_ONLY: YES
     info:
       path: Tunnel/Info.plist

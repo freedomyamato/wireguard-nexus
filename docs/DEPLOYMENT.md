@@ -1,6 +1,7 @@
 # Deploy the private beta
 
-This is a source development package, not a compiled or publicly available VPN.
+This is an invitation-only beta with an Android test build. Hosting must be
+configured separately before Nexus enrollment can connect a phone.
 Use an invited beta on a dedicated Debian/Ubuntu VPS. Do not install over an
 existing managed gateway. The bootstrap creates a separate `nexus0` interface;
 it does not adopt the original installer's `wg0` or existing peers.

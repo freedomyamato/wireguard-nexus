@@ -1,14 +1,23 @@
-# WireGuard Nexus 0.2 — private-beta development package
+# WireGuard Nexus 0.2 — invitation-only VPN beta
+
+[![Android and server tests](https://github.com/freedomyamato/wireguard-nexus/actions/workflows/android.yml/badge.svg)](https://github.com/freedomyamato/wireguard-nexus/actions/workflows/android.yml)
+[![iOS compile](https://github.com/freedomyamato/wireguard-nexus/actions/workflows/ios.yml/badge.svg)](https://github.com/freedomyamato/wireguard-nexus/actions/workflows/ios.yml)
 
 This extends the earlier Android import prototype into a single-node VPN
 platform with a tested enrollment API, device administration, a restricted Linux
 agent, and native Android/iPhone source integrations.
 
-**Release status: mobile sources are uncompiled; no APK/IPA or hosted service is
-included.** The backend tests and syntax checks passed here. Public use still
-requires successful mobile builds, physical-device/tunnel testing, authorized
-hosting, owner signing and store review. This is not the completed commercial
-multi-node platform described in the original roadmap.
+**Android test APK available:** compilation and lint passed on GitHub Actions;
+all 14 server tests passed. Download `nexus-android-debug` from the
+[successful Android build](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980297739)
+and extract `app-debug.apk`. This artifact expires on October 9, 2026; rerun the
+Android workflow to produce a fresh build. See [phone build instructions](docs/MOBILE_BUILDS.md).
+
+The [unsigned iPhone compile check](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980841668)
+also passed, including the packet-tunnel extension and Go bridge. No hosted VPN
+service, signed iPhone release or app-store listing is included. Public use still requires
+physical-device/tunnel testing, hosting, owner release signing and store review.
+This is a single-node beta; it does not implement the commercial multi-node roadmap.
 
 ## What is implemented
 

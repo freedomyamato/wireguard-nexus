@@ -1,58 +1,74 @@
 # Verification record — 2026-10-02
 
-## Verified in this environment
+## GitHub Actions checks passed
 
-`python3 -m unittest discover -s tests -v` discovered 14 tests: **13 passed and
-1 was skipped because the runtime denies Unix sockets**.
+Repository: [freedomyamato/wireguard-nexus](https://github.com/freedomyamato/wireguard-nexus).
 
-Passing coverage includes:
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Server unit and integration suite on Linux/Python 3.12 | All 14 tests passed; no skips | [Android/server workflow](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980297739) |
+| Android dependency resolution and debug compilation | Passed; test-signed APK uploaded | [Android/server workflow](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980297739) |
+| Android debug lint | Passed | Same workflow runs `assembleDebug lintDebug` |
+| iPhone device-SDK compilation with Xcode 16.4 | Passed, unsigned app and packet-tunnel extension with WireGuard Go bridge | [iOS workflow](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980841668) |
 
-- invitation expiry, same-device retry and concurrent single-use redemption;
-- credential ownership checks and rejection of client-private-key fields;
-- real loopback HTTP enrollment, device lookup and administrator revocation;
-- stale acknowledgment protection and pending state when the agent is unavailable;
-- reconciliation acknowledgment and node-key mismatch using a loopback HTTP fixture;
-- agent key/route validation, persistent file permissions, and attempted rollback
-  after an injected live-update failure, using a command fixture.
+The Android run used commit `a58dfb5cb1ca164923335ae80cf4f7f1e00baf4e`.
+The iOS run used commit `1b5b700b3073816660ce77ba3b45e3492a0a6192`.
+Subsequent documentation edits do not change either compiled application.
 
-The Unix-socket test is included and should run on normal Linux/GitHub Actions.
-The TCP fixture verifies the wire protocol and state changes; it does **not**
-verify Unix socket permissions or a live WireGuard interface.
+The APK extracted from the Actions artifact has SHA-256:
 
-Also passed:
+```text
+acb10328c96408907868795baca52521417ba6427ba522bc01ff0d6792af626c
+```
 
-- Python bytecode compilation of server modules;
-- JavaScript syntax check for the administrator page;
-- shell syntax checks for Linux bootstrap and iPhone preparation;
-- XML parsing for Android manifest/vector resources;
-- YAML parsing for both workflows and the XcodeGen project;
-- source package archive integrity verification.
+Artifact archive and APK integrity were checked. The APK includes WireGuard
+native libraries for arm64-v8a, armeabi-v7a, x86 and x86_64. The GitHub artifact
+expires October 9, 2026; rerun the Android workflow for another test build.
 
-## Not verified / not performed
+## Server test coverage
 
-| Item | Reason |
+- Invitation expiry, same-device retry and concurrent single-use redemption.
+- Credential ownership checks and rejection of client-private-key fields.
+- Real loopback HTTP enrollment, device lookup and administrator revocation.
+- Stale acknowledgment protection and pending state when the agent is unavailable.
+- Reconciliation acknowledgment and node-key mismatch using an HTTP fixture.
+- Real Unix-socket reconciliation transport on the GitHub Linux runner.
+- Agent key/route validation, persistent file permissions, and attempted rollback
+  after an injected live-update failure, using a mocked WireGuard command.
+
+These tests do not verify a live WireGuard kernel interface or public traffic.
+The earlier restricted runtime passed 13 tests and skipped Unix-socket creation;
+the GitHub run now verifies all 14.
+
+## Additional source checks
+
+Python bytecode compilation, administrator JavaScript syntax, deployment and
+preparation shell syntax, Android resource XML, workflow/project YAML and source
+archive integrity checks passed. The preparation script's embedded Python also
+passed a syntax check.
+
+Build fixes committed to this repository select a compatible Mac runner, avoid
+Android's obsolete `tools` SDK package, and apply two small compatibility fixes
+to the pinned upstream WireGuard Apple checkout: the Swift manifest API version
+and an explicit `sys/types.h` import. Upstream repositories were not modified.
+
+## Still requires deployment and device validation
+
+| Item | Current state |
 | --- | --- |
-| Android dependency resolution, compilation and lint | No Android SDK/Gradle; Gradle network download blocked |
-| APK signing or installation | No compiled APK or owner release signing identity |
-| iPhone compilation/archive/TestFlight | No Mac/Xcode or Apple provisioning |
-| Actual WireGuard traffic, firewall, rollback or DNS/IPv6 | No provisioned Linux VPN node or physical test phone |
-| Unix-socket transport in this runtime | AF_UNIX socket creation denied by the runtime |
-| GitHub workflow execution | Connected account has no project repository; only an unrelated repository was visible |
-| Hosting and public launch | No authorized server, domain, store accounts or production service identity supplied |
-
-No upstream or unrelated GitHub repository was modified. Source syntax checks
-and mocked command tests are not evidence a mobile binary compiles or a real
-tunnel passes packets. No connection measurements or screenshots are fabricated.
+| Android phone installation and actual tunnel use | Compiled APK available; not tested on a physical phone |
+| iPhone installation, Archive and TestFlight | Compile passed; Apple signing/provisioning still required |
+| Live WireGuard traffic, firewall, rollback, DNS and IPv6 | No VPN server/domain or test devices supplied |
+| Stable Android release signing, APK/AAB and Play publication | Owner release keystore/store account required |
+| Hosting and public launch | No production VPN node or app-store listing deployed |
 
 ## Release gates
 
-1. Import the package into a dedicated project repository and pass the server and
-   Android build workflow; run the unsigned iOS compile workflow on its Mac runner.
-2. Fix any SDK/compiler/lint issues before describing either source project as buildable.
-3. Provision the single-node beta, establish HTTPS, and confirm node synchronization.
-4. Test both native apps on physical devices, including leaks, lifecycle and revocation.
-5. Create owner-signed APK/AAB and iPhone Archive/TestFlight builds.
-6. Complete current platform disclosures and store review before public distribution.
+1. Provision the single-node beta, establish HTTPS, and confirm synchronization.
+2. Test both native apps on physical devices, including enrollment retries,
+   traffic, DNS/IPv6 leaks, lifecycle changes and server-side revocation.
+3. Create owner-signed Android release and iPhone Archive/TestFlight builds.
+4. Complete platform disclosures and store review before public distribution.
 
 The original roadmap's multi-node routing, passkeys, policy engine, kill switch,
 QR scanner, billing and backup automation remain outside this beta's implemented scope.
