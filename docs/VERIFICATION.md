@@ -9,10 +9,10 @@ Repository: [freedomyamato/wireguard-nexus](https://github.com/freedomyamato/wir
 | Server unit and integration suite on Linux/Python 3.12 | All 14 tests passed; no skips | [Android/server workflow](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980297739) |
 | Android dependency resolution and debug compilation | Passed; test-signed APK uploaded | [Android/server workflow](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980297739) |
 | Android debug lint | Passed | Same workflow runs `assembleDebug lintDebug` |
-| iPhone device-SDK compilation with Xcode 16.4 | Passed, unsigned app and packet-tunnel extension with WireGuard Go bridge | [iOS workflow](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980841668) |
+| iPhone device-SDK compilation with Xcode 16.4 | Passed, unsigned app and packet-tunnel extension with WireGuard Go bridge | [iOS workflow](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36981638676) |
 
 The Android run used commit `a58dfb5cb1ca164923335ae80cf4f7f1e00baf4e`.
-The iOS run used commit `1b5b700b3073816660ce77ba3b45e3492a0a6192`.
+The iOS run used commit `017b2200757c0c8f2895bc6f7df4e271ada5fcdb`.
 Subsequent documentation edits do not change either compiled application.
 
 The APK extracted from the Actions artifact has SHA-256:
@@ -53,6 +53,11 @@ to the pinned upstream WireGuard Apple checkout: the Swift manifest API version
 and an explicit `sys/types.h` import. Upstream repositories were not modified.
 
 ## Still requires deployment and device validation
+
+The legacy Go bridge emits a linker warning about `LC_DYSYMTAB`; it does not
+fail the unsigned build. A successful compile does not resolve this runtime
+compatibility concern. Review dependency/runtime upgrades and exercise the
+native tunnel on physical devices before a production release.
 
 | Item | Current state |
 | --- | --- |

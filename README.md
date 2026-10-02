@@ -13,7 +13,7 @@ all 14 server tests passed. Download `nexus-android-debug` from the
 and extract `app-debug.apk`. This artifact expires on October 9, 2026; rerun the
 Android workflow to produce a fresh build. See [phone build instructions](docs/MOBILE_BUILDS.md).
 
-The [unsigned iPhone compile check](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980841668)
+The [unsigned iPhone compile check](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36981638676)
 also passed, including the packet-tunnel extension and Go bridge. No hosted VPN
 service, signed iPhone release or app-store listing is included. Public use still requires
 physical-device/tunnel testing, hosting, owner release signing and store review.

@@ -69,6 +69,9 @@ The XcodeGen project includes a SwiftUI app, an embedded packet-tunnel extension
 shared Keychain access and the Go bridge build phase. The old upstream Go bridge
 requires Go-runtime patches; the CI workflow selects Go 1.19.13 for compatibility.
 Validate that dependency/toolchain on a Mac and review updates before shipping.
+The Go 1.19 bridge currently emits an Xcode linker `LC_DYSYMTAB` warning even
+though the unsigned build succeeds. Review upgrading the pinned bridge/runtime
+and test its behavior on physical devices before a production release.
 
 Set your team in Xcode and choose unique app and extension bundle identifiers.
 The extension ID must be the app's ID plus `.tunnel`. Update the shared Keychain
@@ -78,7 +81,7 @@ entitlements. The app stores a persistent Keychain reference in VPN preferences;
 it does not store the private key in those preferences.
 
 The workflow `.github/workflows/ios.yml` performs an unsigned device-SDK build
-for compile validation. The [October 2, 2026 build](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36980841668)
+for compile validation. The [October 2, 2026 build](https://github.com/freedomyamato/wireguard-nexus/actions/runs/36981638676)
 passed with Xcode 16.4, including the app, embedded extension and Go bridge.
 An unsigned build cannot be installed on an ordinary
 iPhone. Produce an owner-signed Archive and upload it to TestFlight for testing,
