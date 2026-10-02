@@ -1,0 +1,66 @@
+# WireGuard Nexus 0.2 — private-beta development package
+
+This extends the earlier Android import prototype into a single-node VPN
+platform with a tested enrollment API, device administration, a restricted Linux
+agent, and native Android/iPhone source integrations.
+
+**Release status: mobile sources are uncompiled; no APK/IPA or hosted service is
+included.** The backend tests and syntax checks passed here. Public use still
+requires successful mobile builds, physical-device/tunnel testing, authorized
+hosting, owner signing and store review. This is not the completed commercial
+multi-node platform described in the original roadmap.
+
+## What is implemented
+
+| Component | Included behavior |
+| --- | --- |
+| Controller | SQLite state, expiring single-use invitations, atomic enrollment, retry handling, device authentication, desired/applied revocation, audit events |
+| Linux agent | Local protected Unix socket, constrained key/address validation, real `wg syncconf` integration, persistence and attempted rollback |
+| Administrator page | HTTPS reverse-proxy deployment, invite creation, device listing and revocation |
+| Android source | Local key generation, HTTPS enrollment, encrypted local keys, profile import, VPN consent, WireGuard engine, session notification and traffic counters |
+| iPhone source | Local key generation, HTTPS enrollment, shared Keychain, native packet-tunnel provider and VPN preference management |
+| Deployment | Debian/Ubuntu bootstrap, systemd units, separate interface/firewall, Caddy site configuration |
+| CI | Android APK/server-test workflow and unsigned iOS compile workflow |
+
+## Start here
+
+1. Read [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) to prepare a private node.
+2. Read [docs/MOBILE_BUILDS.md](docs/MOBILE_BUILDS.md) to produce installable test apps.
+3. Enroll one test phone, verify real tunnel traffic, then verify revocation.
+4. Complete the checks in [docs/VERIFICATION.md](docs/VERIFICATION.md) before a public launch.
+
+Run local service tests without external dependencies:
+
+```bash
+cd server
+python3 -m unittest discover -s tests -v
+```
+
+The controller and agent use the Python standard library, allowing actual tests
+in this environment. This changes the initial proposed Go stack for the beta;
+the native WireGuard engine remains unchanged. The controller is non-root and
+the colocated privileged agent accepts only peer reconciliation. Remote mTLS
+node management is not implemented in this single-node version.
+
+## Limits
+
+No public signup, passkeys, MFA, multi-node selection, mobile QR scanner, DNS
+filtering service, per-device routing policy, kill switch, payment system,
+automatic update or encrypted-backup command is included. It is an invitation-only,
+internet-egress beta. No connection speeds, regions or uptime are simulated.
+
+The upstream installer inspired the compatibility path, but this package does
+not modify or incorporate that third-party repository. Nexus owns its separate
+`nexus0` interface. Keep dependency licenses/notices with redistributed binaries.
+
+## Primary references
+
+- https://github.com/hwdsl2/wireguard-install
+- https://www.wireguard.com/embedding/
+- https://github.com/WireGuard/wireguard-android
+- https://github.com/WireGuard/wireguard-apple
+- https://developer.android.com/develop/background-work/services/fgs/service-types
+- https://developer.apple.com/app-store/review/guidelines/#vpn-apps
+
+Original Nexus source is MIT licensed; see LICENSE. Treat operator credentials,
+server private keys and release signing identities as owner-controlled secrets.
