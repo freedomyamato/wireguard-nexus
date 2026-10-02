@@ -1,0 +1,23 @@
+[Unit]
+Description=WireGuard Nexus controller
+After=network-online.target nexus-agent.service
+Wants=network-online.target nexus-agent.service
+
+[Service]
+User=nexus
+Group=nexus
+WorkingDirectory=/opt/nexus/server
+EnvironmentFile=/etc/nexus/controller.env
+ExecStart=/usr/bin/python3 -m nexus.api
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/nexus
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

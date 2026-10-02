@@ -1,0 +1,71 @@
+name: WireGuardNexus
+options:
+  deploymentTarget:
+    iOS: '16.0'
+packages:
+  WireGuard:
+    path: vendor/wireguard-apple
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    DEVELOPMENT_TEAM: ''
+    NEXUS_SHARED_GROUP: org.wgnexus.mobile.shared
+    LIBRARY_SEARCH_PATHS: '$(inherited) $(BUILT_PRODUCTS_DIR)'
+targets:
+  Nexus:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.wgnexus.mobile
+        MARKETING_VERSION: '0.2'
+        CURRENT_PROJECT_VERSION: '2'
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_NexusKeychainGroup: '$(AppIdentifierPrefix)$(NEXUS_SHARED_GROUP)'
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+    entitlements:
+      path: App/Nexus.entitlements
+      properties:
+        com.apple.developer.networking.networkextension: [packet-tunnel-provider]
+        keychain-access-groups: ['$(AppIdentifierPrefix)$(NEXUS_SHARED_GROUP)']
+    dependencies:
+      - target: NexusTunnel
+        embed: true
+      - package: WireGuard
+        product: WireGuardKit
+  NexusTunnel:
+    type: app-extension
+    platform: iOS
+    sources: [Tunnel, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.wgnexus.mobile.tunnel
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: Tunnel/Info.plist
+      properties:
+        NexusKeychainGroup: '$(AppIdentifierPrefix)$(NEXUS_SHARED_GROUP)'
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.networkextension.packet-tunnel
+          NSExtensionPrincipalClass: '$(PRODUCT_MODULE_NAME).PacketTunnelProvider'
+    entitlements:
+      path: Tunnel/NexusTunnel.entitlements
+      properties:
+        com.apple.developer.networking.networkextension: [packet-tunnel-provider]
+        keychain-access-groups: ['$(AppIdentifierPrefix)$(NEXUS_SHARED_GROUP)']
+    preBuildScripts:
+      - name: Build WireGuard Go bridge
+        script: |
+          set -eu
+          make -C "$SRCROOT/vendor/wireguard-apple/Sources/WireGuardKitGo" build
+        basedOnDependencyAnalysis: false
+    dependencies:
+      - package: WireGuard
+        product: WireGuardKit
+schemes:
+  Nexus:
+    build:
+      targets:
+        Nexus: all

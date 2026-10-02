@@ -1,0 +1,25 @@
+[Unit]
+Description=WireGuard Nexus restricted node agent
+After=wg-quick@nexus0.service
+Requires=wg-quick@nexus0.service
+
+[Service]
+User=root
+Group=nexus
+WorkingDirectory=/opt/nexus/server
+ExecStart=/usr/bin/python3 -m nexus.agent
+Restart=on-failure
+RestartSec=3
+RuntimeDirectory=nexus
+RuntimeDirectoryMode=0750
+NoNewPrivileges=true
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_CHOWN
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/etc/nexus /run/nexus
+RestrictAddressFamilies=AF_NETLINK AF_UNIX
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

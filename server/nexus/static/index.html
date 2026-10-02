@@ -1,0 +1,5 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nexus administration</title><link rel="stylesheet" href="/style.css"></head>
+<body><main><p class="eyebrow">WIREGUARD NEXUS · PRIVATE BETA</p><h1>Your network, under your control.</h1><p>Invite a phone, check server synchronization, and revoke access.</p>
+<section><label>Administrator token <input id="token" type="password" autocomplete="off"></label><button id="login">Load devices</button><button id="logout">Clear token</button><p id="health"></p></section>
+<section><h2>Enroll a phone</h2><p>Invitations expire in ten minutes. Enter this server URL and invitation token in the Nexus app.</p><button id="invite">Create invitation</button><pre id="invitation"></pre></section>
+<section><h2>Devices</h2><p>Pending revocation means access may remain until the node acknowledges removal.</p><div id="devices"></div></section><p id="message" role="status"></p></main><script src="/app.js"></script></body></html>

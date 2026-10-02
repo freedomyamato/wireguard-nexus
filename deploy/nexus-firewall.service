@@ -1,0 +1,14 @@
+[Unit]
+Description=WireGuard Nexus forwarding and NAT rules
+Before=wg-quick@nexus0.service
+After=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/sbin/nft -f /etc/nexus/firewall.nft
+ExecStop=/usr/sbin/nft delete table inet nexus
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,22 @@
+name: iOS unsigned build
+on:
+  workflow_dispatch:
+  push:
+    paths: ['ios/**', '.github/workflows/ios.yml']
+  pull_request:
+    paths: ['ios/**', '.github/workflows/ios.yml']
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.19.13'
+      - run: brew install xcodegen
+      - run: bash prepare.sh
+        working-directory: ios
+      - run: xcodebuild -project WireGuardNexus.xcodeproj -scheme Nexus -configuration Debug -sdk iphoneos -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build
+        working-directory: ios

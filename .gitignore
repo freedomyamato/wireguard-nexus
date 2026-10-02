@@ -1,0 +1,17 @@
+**/__pycache__/
+**/*.pyc
+*.db
+*.db-shm
+*.db-wal
+*.env
+*.key
+*.jks
+*.keystore
+android/.gradle/
+android/local.properties
+android/**/build/
+ios/vendor/
+ios/*.xcodeproj/
+ios/App/*.entitlements
+ios/Tunnel/*.entitlements
+ios/Tunnel/Info.plist
